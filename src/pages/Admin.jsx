@@ -18,8 +18,8 @@ function Dashboard({ go }) {
     <Card t="Documents" v={docs?.length} err={dErr} />
     <Card t="Indexed chunks" v={chunks} err={dErr} />
   </div>
-  <div className="glass pad"><span className="tag">Documents by regime</span>{dErr ? <p className="muted">{dErr}</p> : !docs ? <LoadingState t="Loading..." /> : Object.keys(by).length ? Object.entries(by).map(([r, n]) => <p key={r}><b>{r}</b> <span className="muted">{n} document{n === 1 ? "" : "s"}</span></p>) : <p className="muted">No documents yet.</p>}</div>
-  <div className="row2"><span className="muted">Add regulatory PDFs to the knowledge base.</span><button className="btn pri" onClick={() => go("Upload")}>Upload Document</button></div></>);
+    <div className="glass pad"><span className="tag">Documents by regime</span>{dErr ? <p className="muted">{dErr}</p> : !docs ? <LoadingState t="Loading..." /> : Object.keys(by).length ? Object.entries(by).map(([r, n]) => <p key={r}><b>{r}</b> <span className="muted">{n} document{n === 1 ? "" : "s"}</span></p>) : <p className="muted">No documents yet.</p>}</div>
+    <div className="row2"><span className="muted">Add regulatory PDFs to the knowledge base.</span><button className="btn pri" onClick={() => go("Upload")}>Upload Document</button></div></>);
 }
 function Documents({ v }) {
   const [docs, setDocs] = useState(null), [err, setErr] = useState(""), [busy, setBusy] = useState(true);
@@ -33,7 +33,22 @@ function Documents({ v }) {
 }
 function Upload({ done }) {
   const { list } = useRegimes(), ref = useRef();
-  const [f, setF] = useState({ title: "", regime: "", language: "en", doc_type: "regulation", source_url: "" }), [file, setFile] = useState(null);
+  const [f, setF] = useState({
+    title: "",
+    regime: "",
+    language: "en",
+    doc_type: "regulation",
+    source_url: "",
+
+    authority: "",
+    instrument_name: "",
+    instrument_type: "",
+    citation: "",
+    version: "",
+    effective_date: "",
+    last_verified: "",
+    official_source: false,
+  });
   const [err, setErr] = useState(""), [ok, setOk] = useState(""), [pct, setPct] = useState(null), [drag, setDrag] = useState(false);
   const pick = x => { setErr(""); if (x && !/\.pdf$/i.test(x.name)) return setErr("Only PDF files are supported."); setFile(x || null); };
   const go = async e => {
@@ -44,6 +59,77 @@ function Upload({ done }) {
   const set = k => e => setF({ ...f, [k]: e.target.value });
   return (<form onSubmit={go} className="glass pad"><h3>Upload Regulatory Document</h3>
     <label>Title</label><input required value={f.title} onChange={set("title")} />
+    <label>Authority</label>
+    <input
+      value={f.authority}
+      onChange={set("authority")}
+      placeholder="e.g. Government of India"
+    />
+
+    <label>Instrument name</label>
+    <input
+      value={f.instrument_name}
+      onChange={set("instrument_name")}
+      placeholder="e.g. Patents Act, 1970"
+    />
+
+    <label>Instrument type</label>
+    <select
+      value={f.instrument_type}
+      onChange={set("instrument_type")}
+    >
+      <option value="">Select…</option>
+      <option value="Act">Act</option>
+      <option value="Rule">Rule</option>
+      <option value="Regulation">Regulation</option>
+      <option value="Treaty">Treaty</option>
+      <option value="Guideline">Guideline</option>
+      <option value="Order">Order</option>
+      <option value="Record">Record</option>
+    </select>
+
+    <label>Citation</label>
+    <input
+      value={f.citation}
+      onChange={set("citation")}
+      placeholder="e.g. Section 3(p)"
+    />
+
+    <label>Version</label>
+    <input
+      value={f.version}
+      onChange={set("version")}
+      placeholder="e.g. 2024"
+    />
+
+    <label>Effective date</label>
+    <input
+      type="date"
+      value={f.effective_date}
+      onChange={set("effective_date")}
+    />
+
+    <label>Last verified</label>
+    <input
+      type="date"
+      value={f.last_verified}
+      onChange={set("last_verified")}
+    />
+
+    <label>
+      <input
+        type="checkbox"
+        checked={f.official_source}
+        onChange={(e) =>
+          setF({
+            ...f,
+            official_source: e.target.checked,
+          })
+        }
+      />
+
+      Official source
+    </label>
     <label>Regime</label><select required value={f.regime} onChange={set("regime")}><option value="">Select…</option>{list?.map(r => <option key={r.code} value={r.code}>{r.label}</option>)}</select>
     <label>Language</label><select value={f.language} onChange={set("language")}>{[["en", "English"], ["hi", "Hindi"], ["te", "Telugu"], ["zh", "Chinese"]].map(([c, t]) => <option key={c} value={c}>{t}</option>)}</select>
     <label>Document type</label><select value={f.doc_type} onChange={set("doc_type")}>{["regulation", "guideline", "patent"].map(t => <option key={t}>{t}</option>)}</select>

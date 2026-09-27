@@ -51,10 +51,110 @@ export function AnswerCard({ label, answer, count, onCites }) {
 export function CitationCard({ c, n }) {
   return (
     <article className="cite">
-      <span className="tag">Source {n}</span><h5>{c.title || "Untitled document"}</h5>
-      <dl><div><dt>Language</dt><dd>{c.language || "—"}</dd></div><div><dt>Document type</dt><dd>{c.doc_type || "—"}</dd></div></dl>
-      <span className="tag">Retrieved passage</span><blockquote>{c.chunk_text}</blockquote>
-      {c.source_url ? <a className="btn" href={c.source_url} target="_blank" rel="noopener noreferrer">Open Source ↗</a> : <button className="btn" disabled>Open Source ↗</button>}
+      <span className="tag">
+        Source {n}
+      </span>
+
+      <h5>
+        {c.title || "Untitled document"}
+      </h5>
+
+      <dl>
+        <div>
+          <dt>Authority</dt>
+          <dd>
+            {c.authority || "—"}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Instrument</dt>
+          <dd>
+            {c.instrument_name || "—"}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Type</dt>
+          <dd>
+            {c.instrument_type ||
+              c.doc_type ||
+              "—"}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Citation</dt>
+          <dd>
+            {c.citation || "—"}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Page</dt>
+          <dd>
+            {c.page_start
+              ? c.page_end &&
+                c.page_end !== c.page_start
+                ? `${c.page_start}-${c.page_end}`
+                : c.page_start
+              : "—"}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Version</dt>
+          <dd>
+            {c.version || "—"}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Effective date</dt>
+          <dd>
+            {c.effective_date || "—"}
+          </dd>
+        </div>
+
+        <div>
+          <dt>Last verified</dt>
+          <dd>
+            {c.last_verified || "—"}
+          </dd>
+        </div>
+      </dl>
+
+      {c.official_source && (
+        <span className="tag">
+          ✓ Official source
+        </span>
+      )}
+
+      <span className="tag">
+        Retrieved passage
+      </span>
+
+      <blockquote>
+        {c.chunk_text}
+      </blockquote>
+
+      {c.source_url ? (
+        <a
+          className="btn"
+          href={c.source_url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open Source ↗
+        </a>
+      ) : (
+        <button
+          className="btn"
+          disabled
+        >
+          Open Source ↗
+        </button>
+      )}
     </article>
   );
 }
