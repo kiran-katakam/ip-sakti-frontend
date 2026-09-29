@@ -20,6 +20,18 @@ export default function ComparePage() {
       </form>
       <ErrorMessage m={err} />
       {res && <>
+        {res?.ip_type &&
+          res.ip_type !== "GENERAL" && (
+            <span
+              className="tag"
+              style={{
+                display: "inline-block",
+                marginBottom: "12px",
+              }}
+            >
+              Legal domain: {res.ip_type}
+            </span>
+          )}
         <div className="cmp">{res.per_regime_answers?.map(p => (
           <div key={p.regime} className="cc">
             <AnswerCard label={label(p.regime)} answer={p.answer} count={p.citations?.length || 0} />

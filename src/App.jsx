@@ -17,6 +17,7 @@ import { LoginPage, RegisterPage } from "./pages/Auth";
 import QueryPage from "./pages/QueryPage";
 import ComparePage from "./pages/ComparePage";
 import Admin from "./pages/Admin";
+import ABSPage from "./pages/ABSPage";
 
 import { isAdmin } from "./services/api";
 import Shader from "./components/Shader";
@@ -109,6 +110,10 @@ function Shell() {
           Query Portal
         </L>
 
+        <L to="/abs">
+          ABS Compliance
+        </L>
+
         <L to="/jurisdictions">
           Jurisdictions
         </L>
@@ -189,6 +194,11 @@ export default function App() {
               <Route
                 path="query"
                 element={<QueryPage />}
+              />
+
+              <Route
+                path="abs"
+                element={<ABSPage />}
               />
 
               {/* /app/compare */}

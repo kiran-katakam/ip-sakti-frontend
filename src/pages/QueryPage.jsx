@@ -146,7 +146,7 @@ function Single() {
 
       setErr(
         x?.message ||
-          "Something went wrong while processing your question."
+        "Something went wrong while processing your question."
       );
     } finally {
       setBusy(false);
@@ -393,14 +393,14 @@ function Single() {
                     confidence.level === "high"
                       ? "#1a4d2e"
                       : confidence.level === "medium"
-                      ? "#4d4a1a"
-                      : "#4d1a1a",
+                        ? "#4d4a1a"
+                        : "#4d1a1a",
                   color:
                     confidence.level === "high"
                       ? "#4ade80"
                       : confidence.level === "medium"
-                      ? "#facc15"
-                      : "#f87171",
+                        ? "#facc15"
+                        : "#f87171",
                 }}
               >
                 Confidence:{" "}
@@ -409,7 +409,7 @@ function Single() {
                   : "UNKNOWN"}{" "}
                 (
                 {typeof confidence.score ===
-                "number"
+                  "number"
                   ? confidence.score
                   : "N/A"}
                 )
@@ -428,6 +428,19 @@ function Single() {
                 {confidence.note}
               </p>
             )}
+
+            {res.ip_type &&
+              res.ip_type !== "GENERAL" && (
+                <span
+                  className="tag"
+                  style={{
+                    display: "inline-block",
+                    marginBottom: "8px",
+                  }}
+                >
+                  Legal domain: {res.ip_type}
+                </span>
+              )}
 
             <AnswerCard
               label={label(

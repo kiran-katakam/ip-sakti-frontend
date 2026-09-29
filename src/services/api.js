@@ -60,3 +60,14 @@ export const uploadDocument = (fd, onProgress) => new Promise((ok, no) => {
   };
   x.send(fd);
 });
+export const analyzeABS = (
+  scenario,
+  response_language = "auto"
+) =>
+  req("/api/v1/abs/analyze", {
+    method: "POST",
+    json: {
+      scenario,
+      response_language,
+    },
+  });

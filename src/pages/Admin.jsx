@@ -50,6 +50,7 @@ function Upload({ done }) {
     official_source: false,
   });
   const [err, setErr] = useState(""), [ok, setOk] = useState(""), [pct, setPct] = useState(null), [drag, setDrag] = useState(false);
+  const [file, setFile] = useState(null);
   const pick = x => { setErr(""); if (x && !/\.pdf$/i.test(x.name)) return setErr("Only PDF files are supported."); setFile(x || null); };
   const go = async e => {
     e.preventDefault(); setErr(""); setOk(""); if (!file) return setErr("Choose a PDF to upload."); if (!f.regime) return setErr("Select a regime.");
