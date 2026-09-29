@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import ComparePage from "./ComparePage";
 import { useSearchParams } from "react-router-dom";
 
@@ -15,6 +16,7 @@ import { query } from "../services/api";
 function Single() {
   const [sp] = useSearchParams();
   const { label } = useRegimes();
+  const { t } = useTranslation();
 
   const [regime, setRegime] = useState(
     sp.get("regime") || ""
@@ -37,7 +39,7 @@ function Single() {
 
     if (!SpeechRecognition) {
       setErr(
-        "Voice input isn't supported in this browser. Try Chrome or Microsoft Edge."
+        t("query.voiceNotSupported")
       );
       return;
     }
@@ -74,15 +76,15 @@ function Single() {
 
       if (event.error === "not-allowed") {
         setErr(
-          "Microphone permission was denied. Please allow microphone access in your browser."
+          t("query.micDenied")
         );
       } else if (event.error === "no-speech") {
         setErr(
-          "No speech was detected. Please try again."
+          t("query.noSpeech")
         );
       } else {
         setErr(
-          "Voice input failed. Please try again."
+          t("query.voiceFailed")
         );
       }
     };
@@ -106,12 +108,12 @@ function Single() {
     e.preventDefault();
 
     if (!regime) {
-      setErr("Select a jurisdiction first.");
+      setErr(t("query.selectJurisdiction"));
       return;
     }
 
     if (!q.trim()) {
-      setErr("Please enter a question first.");
+      setErr(t("query.enterQuestion"));
       return;
     }
 
@@ -146,7 +148,7 @@ function Single() {
 
       setErr(
         x?.message ||
-        "Something went wrong while processing your question."
+        t("query.queryError")
       );
     } finally {
       setBusy(false);
@@ -159,18 +161,17 @@ function Single() {
   return (
     <div className="work">
       <section className="main">
-        <h1>Ask IP-SAKTI</h1>
+        <h1>{t("query.title")}</h1>
 
         <p className="muted">
-          Get source-grounded regulatory guidance
-          for your selected jurisdiction.
+          {t("query.subtitle")}
         </p>
 
         <form
           onSubmit={go}
           className="glass pad"
         >
-          <label>Jurisdiction</label>
+          <label>{t("query.jurisdiction")}</label>
 
           <JurisdictionSelector
             value={regime}
@@ -181,7 +182,7 @@ function Single() {
             htmlFor="rl"
             style={{ marginTop: "14px" }}
           >
-            Response language
+            {t("query.responseLang")}
           </label>
 
           <select
@@ -193,19 +194,19 @@ function Single() {
             disabled={busy}
           >
             <option value="auto">
-              Auto-detect
+              {t("query.autoDetect")}
             </option>
 
             <option value="en">
-              English
+              {t("query.english")}
             </option>
 
             <option value="hi">
-              Hindi
+              {t("query.hindi")}
             </option>
 
             <option value="te">
-              Telugu
+              {t("query.telugu")}
             </option>
           </select>
 
@@ -213,7 +214,7 @@ function Single() {
             htmlFor="question"
             style={{ marginTop: "14px" }}
           >
-            Your question
+            {t("query.yourQuestion")}
           </label>
 
           <div
@@ -228,7 +229,7 @@ function Single() {
               onChange={(e) =>
                 setQ(e.target.value)
               }
-              placeholder="Ask about patents, regulatory approval, traditional knowledge, Ayurveda products, or compliance requirements..."
+              placeholder={t("query.questionPlaceholder")}
               disabled={busy}
               rows={5}
               style={{
@@ -245,8 +246,8 @@ function Single() {
               disabled={busy || listening}
               title={
                 listening
-                  ? "Listening..."
-                  : "Speak your question"
+                  ? t("query.listening")
+                  : t("query.speakQuestion")
               }
               style={{
                 position: "absolute",
@@ -284,8 +285,7 @@ function Single() {
                 marginBottom: "0",
               }}
             >
-              🎤 Listening... Speak your
-              question now.
+              {t("query.listeningPrompt")}
             </p>
           )}
 
@@ -293,7 +293,7 @@ function Single() {
             htmlFor="top-k"
             style={{ marginTop: "14px" }}
           >
-            Number of sources
+            {t("query.numSources")}
           </label>
 
           <select
@@ -304,10 +304,10 @@ function Single() {
             }
             disabled={busy}
           >
-            <option value={3}>3 sources</option>
-            <option value={5}>5 sources</option>
-            <option value={8}>8 sources</option>
-            <option value={10}>10 sources</option>
+            <option value={3}>{t("query.sources_3")}</option>
+            <option value={5}>{t("query.sources_5")}</option>
+            <option value={8}>{t("query.sources_8")}</option>
+            <option value={10}>{t("query.sources_10")}</option>
           </select>
 
           <button
@@ -319,8 +319,8 @@ function Single() {
             }}
           >
             {busy
-              ? "Searching..."
-              : "Ask IP-SAKTI"}
+              ? t("query.searching")
+              : t("query.askIpSakti")}
           </button>
         </form>
 
@@ -337,7 +337,7 @@ function Single() {
             }}
           >
             <strong>
-              Could you clarify a bit more?
+              {t("query.clarifyMore")}
             </strong>
 
             <ul
@@ -367,9 +367,7 @@ function Single() {
                 marginBottom: "0",
               }}
             >
-              Add these details to your question
-              above and ask again for a more
-              precise answer.
+              {t("query.clarifyHint")}
             </p>
           </div>
         )}
@@ -403,15 +401,15 @@ function Single() {
                         : "#f87171",
                 }}
               >
-                Confidence:{" "}
+                {t("query.confidence")}:{" "}
                 {confidence.level
                   ? confidence.level.toUpperCase()
-                  : "UNKNOWN"}{" "}
+                  : t("query.unknown")}{" "}
                 (
                 {typeof confidence.score ===
                   "number"
                   ? confidence.score
-                  : "N/A"}
+                  : t("query.na")}
                 )
               </div>
             )}
@@ -438,7 +436,7 @@ function Single() {
                     marginBottom: "8px",
                   }}
                 >
-                  Legal domain: {res.ip_type}
+                  {t("query.legalDomain", { type: res.ip_type })}
                 </span>
               )}
 
@@ -466,6 +464,7 @@ function Single() {
 export default function Portal() {
   const [sp, setSp] =
     useSearchParams();
+  const { t } = useTranslation();
 
   const mode =
     sp.get("mode") === "compare"
@@ -485,16 +484,16 @@ export default function Portal() {
       <div
         className="seg"
         role="group"
-        aria-label="Query mode"
+        aria-label={t("query.queryMode")}
       >
         {[
           [
             "single",
-            "Single jurisdiction",
+            t("query.singleJurisdiction"),
           ],
           [
             "compare",
-            "Compare jurisdictions",
+            t("query.compareJurisdictions"),
           ],
         ].map(([m, text]) => (
           <button

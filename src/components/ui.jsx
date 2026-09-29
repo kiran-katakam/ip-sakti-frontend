@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getRegimes } from "../services/api";
 
 export const ErrorMessage = ({ m }) => (m ? <div role="alert" className="err">{m}</div> : null);
@@ -12,12 +13,13 @@ export function useRegimes() {
 
 export function JurisdictionSelector({ value, onChange, multi }) {
   const { list, err } = useRegimes();
+  const { t } = useTranslation();
   if (err) return <ErrorMessage m={err} />;
-  if (!list) return <LoadingState t="Loading jurisdictions..." />;
+  if (!list) return <LoadingState t={t("jurisdictions.loading")} />;
   const has = c => (multi ? value.includes(c) : value === c);
   const tog = c => onChange(multi ? (has(c) ? value.filter(x => x !== c) : [...value, c]) : c);
   return (
-    <div className="regs" role="group" aria-label="Jurisdiction">
+    <div className="regs" role="group" aria-label={t("query.jurisdiction")}>
       {list.map(r => (
         <button type="button" key={r.code} className={"reg" + (has(r.code) ? " on" : "")} aria-pressed={has(r.code)} onClick={() => tog(r.code)}>
           <b>{r.label}</b><span className="tag">{r.code} · {r.language}</span>
@@ -38,44 +40,46 @@ function Md({ text }) { // basic markdown: paragraphs, bullets, headings, **bold
 }
 
 export function AnswerCard({ label, answer, count, onCites }) {
+  const { t } = useTranslation();
   const empty = !answer?.trim();
   return (
     <article className="glass ans">
-      <header><span className="tag">AI answer</span><h3>{label}</h3>
-        {onCites && <button className="btn ghost" onClick={onCites}>{count} citation{count === 1 ? "" : "s"}</button>}</header>
-      {empty ? <p className="muted">Available sources do not contain enough information to answer this question.</p> : <div className="md"><Md text={answer} /></div>}
+      <header><span className="tag">{t("ui.aiAnswer")}</span><h3>{label}</h3>
+        {onCites && <button className="btn ghost" onClick={onCites}>{t("ui.citation", { count })}</button>}</header>
+      {empty ? <p className="muted">{t("ui.noInfoAnswer")}</p> : <div className="md"><Md text={answer} /></div>}
     </article>
   );
 }
 
 export function CitationCard({ c, n }) {
+  const { t } = useTranslation();
   return (
     <article className="cite">
       <span className="tag">
-        Source {n}
+        {t("ui.sourceN", { n })}
       </span>
 
       <h5>
-        {c.title || "Untitled document"}
+        {c.title || t("ui.untitledDoc")}
       </h5>
 
       <dl>
         <div>
-          <dt>Authority</dt>
+          <dt>{t("ui.authority")}</dt>
           <dd>
             {c.authority || "—"}
           </dd>
         </div>
 
         <div>
-          <dt>Instrument</dt>
+          <dt>{t("ui.instrument")}</dt>
           <dd>
             {c.instrument_name || "—"}
           </dd>
         </div>
 
         <div>
-          <dt>Type</dt>
+          <dt>{t("ui.type")}</dt>
           <dd>
             {c.instrument_type ||
               c.doc_type ||
@@ -84,14 +88,14 @@ export function CitationCard({ c, n }) {
         </div>
 
         <div>
-          <dt>Citation</dt>
+          <dt>{t("ui.citation")}</dt>
           <dd>
             {c.citation || "—"}
           </dd>
         </div>
 
         <div>
-          <dt>Page</dt>
+          <dt>{t("ui.page")}</dt>
           <dd>
             {c.page_start
               ? c.page_end &&
@@ -103,21 +107,21 @@ export function CitationCard({ c, n }) {
         </div>
 
         <div>
-          <dt>Version</dt>
+          <dt>{t("ui.version")}</dt>
           <dd>
             {c.version || "—"}
           </dd>
         </div>
 
         <div>
-          <dt>Effective date</dt>
+          <dt>{t("ui.effectiveDate")}</dt>
           <dd>
             {c.effective_date || "—"}
           </dd>
         </div>
 
         <div>
-          <dt>Last verified</dt>
+          <dt>{t("ui.lastVerified")}</dt>
           <dd>
             {c.last_verified || "—"}
           </dd>
@@ -126,12 +130,12 @@ export function CitationCard({ c, n }) {
 
       {c.official_source && (
         <span className="tag">
-          ✓ Official source
+          {t("ui.officialSource")}
         </span>
       )}
 
       <span className="tag">
-        Retrieved passage
+        {t("ui.retrievedPassage")}
       </span>
 
       <blockquote>
@@ -145,14 +149,14 @@ export function CitationCard({ c, n }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Open Source ↗
+          {t("ui.openSource")}
         </a>
       ) : (
         <button
           className="btn"
           disabled
         >
-          Open Source ↗
+          {t("ui.openSource")}
         </button>
       )}
     </article>
@@ -160,21 +164,23 @@ export function CitationCard({ c, n }) {
 }
 
 export function CitationPanel({ cites = [], open, onClose }) {
+  const { t } = useTranslation();
   return (
-    <aside className={"cites" + (open ? " open" : "")} aria-label="Citations">
-      <div className="ch"><h4>Sources ({cites.length})</h4><button className="btn ghost close" onClick={onClose}>Close</button></div>
-      {cites.length ? cites.map((c, i) => <CitationCard key={i} c={c} n={i + 1} />) : <p className="muted">Citations for the current answer appear here.</p>}
+    <aside className={"cites" + (open ? " open" : "")} aria-label={t("ui.citation", { count: cites.length })}>
+      <div className="ch"><h4>{t("ui.sourcesCount", { count: cites.length })}</h4><button className="btn ghost close" onClick={onClose}>{t("ui.close")}</button></div>
+      {cites.length ? cites.map((c, i) => <CitationCard key={i} c={c} n={i + 1} />) : <p className="muted">{t("ui.citationHere")}</p>}
     </aside>
   );
 }
 
-export function QuestionInput({ value, onChange, k, onK, busy, label = "Ask IP-SAKTI", pending = "Retrieving regulatory sources..." }) {
+export function QuestionInput({ value, onChange, k, onK, busy, label, pending }) {
+  const { t } = useTranslation();
   return (
     <>
-      <label htmlFor="q">Question</label>
-      <textarea id="q" rows={4} required value={value} onChange={e => onChange(e.target.value)} placeholder="Ask about patents, regulatory approval, traditional knowledge, Ayurveda products, or compliance requirements..." />
-      <div className="row2"><div><label htmlFor="k">Top K</label><input id="k" type="number" min={1} max={20} value={k} onChange={e => onK(+e.target.value)} style={{ width: 90 }} /></div>
-        <button className="btn pri" disabled={busy || !value.trim()}>{busy ? "Working..." : label}</button></div>
+      <label htmlFor="q">{t("ui.question")}</label>
+      <textarea id="q" rows={4} required value={value} onChange={e => onChange(e.target.value)} placeholder={t("query.questionPlaceholder")} />
+      <div className="row2"><div><label htmlFor="k">{t("ui.topK")}</label><input id="k" type="number" min={1} max={20} value={k} onChange={e => onK(+e.target.value)} style={{ width: 90 }} /></div>
+        <button className="btn pri" disabled={busy || !value.trim()}>{busy ? t("ui.working") : label}</button></div>
       {busy && <LoadingState t={pending} />}
     </>
   );

@@ -8,6 +8,7 @@ import {
   Outlet,
   useNavigate,
 } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
@@ -22,6 +23,7 @@ import ABSPage from "./pages/ABSPage";
 import { isAdmin } from "./services/api";
 import Shader from "./components/Shader";
 import { useRegimes, ErrorMessage, LoadingState } from "./components/ui";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 
 
 /* =========================
@@ -30,15 +32,16 @@ import { useRegimes, ErrorMessage, LoadingState } from "./components/ui";
 
 function Jurisdictions() {
   const { list, err } = useRegimes();
+  const { t } = useTranslation();
 
   return (
     <div className="main wide">
-      <h1>Jurisdictions</h1>
+      <h1>{t("jurisdictions.title")}</h1>
 
       <ErrorMessage m={err} />
 
       {!list && !err && (
-        <LoadingState t="Loading jurisdictions..." />
+        <LoadingState t={t("jurisdictions.loading")} />
       )}
 
       <div className="cmp">
@@ -53,7 +56,7 @@ function Jurisdictions() {
             <h3>{r.label}</h3>
 
             <p className="tag">
-              Language: {r.language}
+              {t("jurisdictions.language", { lang: r.language })}
             </p>
           </NavLink>
         ))}
@@ -69,6 +72,7 @@ function Jurisdictions() {
 
 function Shell() {
   const { email, logout } = useAuth();
+  const { t } = useTranslation();
 
   const nav = useNavigate();
 
@@ -100,29 +104,31 @@ function Shell() {
         onClick={() => setOpen(!open)}
         aria-expanded={open}
       >
-        Menu
+        {t("nav.menu")}
       </button>
 
       <nav className={"side" + (open ? " open" : "")}>
-        <h4>IP-SAKTI Sahayak</h4>
+        <h4>{t("app.name")}</h4>
 
         <L to="/query">
-          Query Portal
+          {t("nav.queryPortal")}
         </L>
 
         <L to="/abs">
-          ABS Compliance
+          {t("nav.absCompliance")}
         </L>
 
         <L to="/jurisdictions">
-          Jurisdictions
+          {t("nav.jurisdictions")}
         </L>
 
         {isAdmin(email) && (
           <L to="/admin">
-            Admin Panel
+            {t("nav.adminPanel")}
           </L>
         )}
+
+        <LanguageSwitcher />
 
         <div className="grow" />
 
@@ -130,14 +136,14 @@ function Shell() {
           className="tag"
           style={{ wordBreak: "break-all" }}
         >
-          {email || "Signed in"}
+          {email || t("nav.signedIn")}
         </p>
 
         <button
           className="nv"
           onClick={handleLogout}
         >
-          Logout
+          {t("nav.logout")}
         </button>
       </nav>
 

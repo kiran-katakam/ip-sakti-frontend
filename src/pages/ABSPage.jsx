@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ErrorMessage,
   CitationCard,
@@ -20,6 +21,7 @@ function formatValue(value) {
 }
 
 export default function ABSPage() {
+  const { t } = useTranslation();
   const [scenario, setScenario] = useState("");
   const [language, setLanguage] = useState("auto");
   const [busy, setBusy] = useState(false);
@@ -31,7 +33,7 @@ export default function ABSPage() {
 
     if (!scenario.trim()) {
       setError(
-        "Describe the biological resource, its use, and what you plan to do with it."
+        t("abs.describeError")
       );
       return;
     }
@@ -50,7 +52,7 @@ export default function ABSPage() {
     } catch (err) {
       setError(
         err?.message ||
-          "ABS analysis failed."
+          t("abs.analysisFailed")
       );
     } finally {
       setBusy(false);
@@ -59,19 +61,17 @@ export default function ABSPage() {
 
   return (
     <div className="main wide">
-      <h1>ABS Compliance Helper</h1>
+      <h1>{t("abs.title")}</h1>
 
       <p className="muted">
-        Screen an Ayurveda-related activity for
-        potential Access and Benefit-Sharing
-        requirements using authoritative sources.
+        {t("abs.subtitle")}
       </p>
 
       <form
         onSubmit={submit}
         className="glass pad"
       >
-        <label>Describe your situation</label>
+        <label>{t("abs.describeSituation")}</label>
 
         <textarea
           value={scenario}
@@ -80,9 +80,7 @@ export default function ABSPage() {
           }
           rows={7}
           disabled={busy}
-          placeholder={
-            "Example: We are an Indian company developing an Ayurvedic product using neem obtained in India and plan to commercialise it and apply for an IP right."
-          }
+          placeholder={t("abs.placeholder")}
           style={{
             width: "100%",
             resize: "vertical",
@@ -95,7 +93,7 @@ export default function ABSPage() {
             marginTop: "14px",
           }}
         >
-          Response language
+          {t("abs.responseLang")}
         </label>
 
         <select
@@ -106,16 +104,16 @@ export default function ABSPage() {
           disabled={busy}
         >
           <option value="auto">
-            Auto-detect
+            {t("abs.autoDetect")}
           </option>
           <option value="en">
-            English
+            {t("abs.english")}
           </option>
           <option value="hi">
-            Hindi
+            {t("abs.hindi")}
           </option>
           <option value="te">
-            Telugu
+            {t("abs.telugu")}
           </option>
         </select>
 
@@ -126,8 +124,8 @@ export default function ABSPage() {
           style={{ marginTop: "15px" }}
         >
           {busy
-            ? "Checking ABS sources..."
-            : "Analyse ABS"}
+            ? t("abs.checkingSources")
+            : t("abs.analyse")}
         </button>
       </form>
 
@@ -137,7 +135,7 @@ export default function ABSPage() {
         <div style={{ marginTop: "18px" }}>
           <article className="glass pad">
             <span className="tag">
-              Screening status
+              {t("abs.screeningStatus")}
             </span>
 
             <h2>
@@ -162,7 +160,7 @@ export default function ABSPage() {
               0 && (
               <>
                 <h4>
-                  Information still needed
+                  {t("abs.infoNeeded")}
                 </h4>
 
                 {result.screening.missing_information.map(
@@ -185,7 +183,7 @@ export default function ABSPage() {
           >
             <header>
               <span className="tag">
-                ABS guidance
+                {t("abs.absGuidance")}
               </span>
             </header>
 
@@ -200,7 +198,7 @@ export default function ABSPage() {
               style={{ marginTop: "12px" }}
             >
               <span className="tag">
-                Extracted facts
+                {t("abs.extractedFacts")}
               </span>
 
               {Object.entries(
@@ -235,7 +233,7 @@ export default function ABSPage() {
               style={{ marginTop: "12px" }}
             >
               <span className="tag">
-                Authoritative sources
+                {t("abs.authoritativeSources")}
               </span>
 
               {result.citations.map(
